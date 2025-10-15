@@ -7,21 +7,30 @@
 <div class="card mb-4">
     <div class="card-body">
         <div class="row align-items-center">
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3 mb-md-0">
                 <form method="get" class="d-flex">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control" name="search" placeholder="Search projects or clients..." value="{{ request.GET.search }}">
-                        <button type="submit" class="btn btn-primary">Search</button>
+                        <input type="text" class="form-control" name="search" placeholder="Search projects..." value="{{ request.GET.search }}">
+                        <button type="submit" class="btn btn-primary d-none d-sm-block">Search</button>
+                        <button type="submit" class="btn btn-primary d-sm-none"><i class="fas fa-search"></i></button>
                     </div>
                 </form>
             </div>
             <div class="col-md-6">
-                <div class="btn-group w-100" role="group">
+                <div class="btn-group w-100 d-none d-md-flex" role="group">
                     <a href="{% url 'projects' %}" class="btn {% if not request.GET.status %}btn-primary{% else %}btn-outline-primary{% endif %}">All Projects</a>
                     <a href="?status=Ongoing" class="btn {% if request.GET.status == 'Ongoing' %}btn-primary{% else %}btn-outline-primary{% endif %}">Ongoing</a>
                     <a href="?status=Completed" class="btn {% if request.GET.status == 'Completed' %}btn-primary{% else %}btn-outline-primary{% endif %}">Completed</a>
                     <a href="?status=Pending" class="btn {% if request.GET.status == 'Pending' %}btn-primary{% else %}btn-outline-primary{% endif %}">Pending</a>
+                </div>
+                <div class="d-md-none">
+                    <select class="form-select" onchange="window.location.href=this.value">
+                        <option value="{% url 'projects' %}" {% if not request.GET.status %}selected{% endif %}>All Projects</option>
+                        <option value="?status=Ongoing" {% if request.GET.status == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+                        <option value="?status=Completed" {% if request.GET.status == 'Completed' %}selected{% endif %}>Completed</option>
+                        <option value="?status=Pending" {% if request.GET.status == 'Pending' %}selected{% endif %}>Pending</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -42,10 +51,10 @@
                         <th>Project</th>
                         <th>Amount</th>
                         <th>Status</th>
-                        <th>Dates</th>
-                        <th>Description</th>
-                        <th>Email</th>
-                        <th>Contact</th>
+                        <th class="d-none d-lg-table-cell">Dates</th>
+                        <th class="d-none d-xl-table-cell">Description</th>
+                        <th class="d-none d-lg-table-cell">Email</th>
+                        <th class="d-none d-lg-table-cell">Contact</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,13 +75,13 @@
                                 {{ project.status }}
                             </span>
                         </td>
-                        <td>
+                        <td class="d-none d-lg-table-cell">
                             <small class="text-muted">Start:</small> {{ project.start_date }}<br>
                             <small class="text-muted">Due:</small> {{ project.deadline }}
                         </td>
-                        <td><small>{{ project.description }}</small></td>
-                        <td>{{ project.email|default:"-" }}</td>
-                        <td>{{ project.contact|default:"-" }}</td>
+                        <td class="d-none d-xl-table-cell"><small>{{ project.description }}</small></td>
+                        <td class="d-none d-lg-table-cell">{{ project.email|default:"-" }}</td>
+                        <td class="d-none d-lg-table-cell">{{ project.contact|default:"-" }}</td>
                     </tr>
                     {% empty %}
                     <tr>

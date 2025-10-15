@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: freelancing-dashboard
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn freelance_dashboard.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GOOGLE_SHEET_ID
+        value: 1F2PLmOQC3J8G3K9j2Q6EH37hP7toKphSuCZN4jfVD7Q
+      - key: GOOGLE_CREDENTIALS_JSON
+        sync: false

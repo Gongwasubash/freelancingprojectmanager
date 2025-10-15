@@ -1,34 +1,8 @@
-# Django
-*.log
-*.pot
 *.pyc
 __pycache__/
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-
-# Environment variables
 .env
-
-# Google Credentials
 credentials.json
-*.json
-
-# Static files
-/static/
-/media/
-
-# Virtual environment
-venv/
-env/
-ENV/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
+db.sqlite3
+staticfiles/
 .DS_Store
-Thumbs.db
+*.log

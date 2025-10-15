@@ -1,0 +1,344 @@
+/* Mobile First Responsive Design */
+
+/* Base styles for all devices */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.main-content {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    min-height: calc(100vh - 56px);
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 1rem;
+    margin: 0 auto;
+}
+
+/* Mobile devices (320px - 576px) */
+@media (max-width: 575.98px) {
+    .container-fluid {
+        padding: 0.75rem;
+        max-width: 100%;
+    }
+    
+    .row {
+        margin: 0;
+        width: 100%;
+    }
+    
+    .col-md-4, .col-md-6, .col-md-8, .col-lg-3, .col-lg-6, .col-12 {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .kpi-card {
+        padding: 1.25rem 1rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .kpi-card h2 {
+        font-size: 1.75rem;
+    }
+    
+    .kpi-card h6 {
+        font-size: 0.8rem;
+    }
+    
+    .kpi-icon {
+        font-size: 2rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-header {
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.75rem;
+        overflow-x: auto;
+    }
+    
+    .table {
+        min-width: 500px;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem 0.25rem;
+        white-space: nowrap;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .input-group {
+        margin-bottom: 1rem;
+    }
+    
+    .navbar-nav {
+        padding: 1rem 0;
+        text-align: center;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem !important;
+        margin: 0.25rem 0;
+    }
+}
+
+/* Small tablets (576px - 768px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .container-fluid {
+        max-width: 540px;
+        padding: 1rem;
+    }
+    
+    .col-md-4, .col-md-6 {
+        width: 50%;
+        padding: 0.75rem;
+    }
+    
+    .col-md-8, .col-12 {
+        width: 100%;
+        padding: 0.75rem;
+    }
+    
+    .kpi-card {
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+}
+
+/* Medium tablets (768px - 992px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .container-fluid {
+        max-width: 720px;
+        padding: 1.5rem;
+    }
+    
+    .col-md-4 {
+        width: 33.333333%;
+        padding: 1rem;
+    }
+    
+    .col-md-6 {
+        width: 50%;
+        padding: 1rem;
+    }
+    
+    .col-md-8 {
+        width: 66.666667%;
+        padding: 1rem;
+    }
+    
+    .kpi-card {
+        padding: 1.75rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+}
+
+/* Large tablets and small desktops (992px - 1200px) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .container-fluid {
+        max-width: 960px;
+        padding: 2rem;
+    }
+    
+    .col-lg-3 {
+        width: 25%;
+        padding: 1rem;
+    }
+    
+    .col-lg-6 {
+        width: 50%;
+        padding: 1rem;
+    }
+    
+    .kpi-card {
+        padding: 2rem;
+    }
+}
+
+/* Large desktops (1200px and up) */
+@media (min-width: 1200px) {
+    .container-fluid {
+        max-width: 1140px;
+        padding: 2rem;
+    }
+    
+    .kpi-card {
+        padding: 2rem;
+    }
+}
+
+/* Extra large desktops (1400px and up) */
+@media (min-width: 1400px) {
+    .container-fluid {
+        max-width: 1320px;
+        padding: 2.5rem;
+    }
+}
+
+/* Navbar responsive fixes */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background: var(--bg-secondary);
+        border-radius: 10px;
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+    
+    .navbar-nav {
+        text-align: center;
+    }
+    
+    .nav-link {
+        margin: 0.25rem 0;
+        border-radius: 8px;
+    }
+    
+    .navbar-actions {
+        justify-content: center;
+        margin-top: 1rem;
+        gap: 1rem;
+    }
+}
+
+/* Chart responsiveness */
+@media (max-width: 767.98px) {
+    canvas {
+        max-height: 250px !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    canvas {
+        max-height: 300px !important;
+    }
+}
+
+/* Table responsiveness improvements */
+@media (max-width: 575.98px) {
+    .table th:nth-child(n+5),
+    .table td:nth-child(n+5) {
+        display: none;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .table th:nth-child(n+6),
+    .table td:nth-child(n+6) {
+        display: none;
+    }
+}
+
+/* Form responsiveness */
+@media (max-width: 575.98px) {
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .input-group .btn {
+        margin-top: 0.5rem;
+        border-radius: 8px !important;
+    }
+    
+    .input-group-text {
+        border-radius: 8px 8px 0 0 !important;
+    }
+    
+    .form-control {
+        border-radius: 0 0 8px 8px !important;
+    }
+}
+
+/* Button responsiveness */
+@media (max-width: 575.98px) {
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Card responsiveness */
+@media (max-width: 575.98px) {
+    .card {
+        border-radius: 12px;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+}
+
+/* Utility classes for responsive design */
+.text-center-mobile {
+    text-align: left;
+}
+
+@media (max-width: 575.98px) {
+    .text-center-mobile {
+        text-align: center;
+    }
+}
+
+.hide-mobile {
+    display: block;
+}
+
+@media (max-width: 575.98px) {
+    .hide-mobile {
+        display: none;
+    }
+}
+
+.show-mobile {
+    display: none;
+}
+
+@media (max-width: 575.98px) {
+    .show-mobile {
+        display: block;
+    }
+}
