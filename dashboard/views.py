@@ -114,3 +114,24 @@ def refresh_data(request):
     sheets_service = GoogleSheetsService()
     projects = sheets_service.get_dashboard_data()
     return JsonResponse({'status': 'success', 'count': len(projects)})
+
+@login_required
+def debug_sheets(request):
+    """Debug view to check Google Sheets connection"""
+    sheets_service = GoogleSheetsService()
+    debug_info = {
+        'sheet_id': sheets_service.sheet_id,
+        'has_credentials_json': bool(os.getenv('GOOGLE_CREDENTIALS_JSON')),
+        'credentials_file_exists': os.path.exists(sheets_service.credentials_file),
+        'authentication_success': sheets_service.authenticate(),
+    }
+    
+    if sheets_service.client:
+        try:
+            raw_data = sheets_service.get_all_data()
+            debug_info['raw_data_count'] = len(raw_data)
+            debug_info['sample_raw_data'] = raw_data[:2] if raw_data else []
+        except Exception as e:
+            debug_info['data_fetch_error'] = str(e)
+    
+    return JsonResponse(debug_info, indent=2)

@@ -7,4 +7,5 @@ urlpatterns = [
     path('finance/', views.finance_summary, name='finance'),
     path('settings/', views.settings_view, name='settings'),
     path('refresh/', views.refresh_data, name='refresh_data'),
+    path('debug-sheets/', views.debug_sheets, name='debug_sheets'),
 ]
