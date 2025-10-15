@@ -1,0 +1,6 @@
+@echo off
+echo Creating user...
+python fix_login.py
+echo Starting server...
+python manage.py runserver 127.0.0.1:8000
+pause

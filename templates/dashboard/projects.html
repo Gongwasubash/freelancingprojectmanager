@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Projects{% endblock %}
+
+{% block content %}
+<!-- Filters and Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <form method="get" class="d-flex">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" name="search" placeholder="Search projects or clients..." value="{{ request.GET.search }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group w-100" role="group">
+                    <a href="{% url 'projects' %}" class="btn {% if not request.GET.status %}btn-primary{% else %}btn-outline-primary{% endif %}">All Projects</a>
+                    <a href="?status=Ongoing" class="btn {% if request.GET.status == 'Ongoing' %}btn-primary{% else %}btn-outline-primary{% endif %}">Ongoing</a>
+                    <a href="?status=Completed" class="btn {% if request.GET.status == 'Completed' %}btn-primary{% else %}btn-outline-primary{% endif %}">Completed</a>
+                    <a href="?status=Pending" class="btn {% if request.GET.status == 'Pending' %}btn-primary{% else %}btn-outline-primary{% endif %}">Pending</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Projects Table -->
+<div class="card">
+    <div class="card-header">
+        <h5>Projects List ({{ projects|length }} projects)</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Project</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Dates</th>
+                        <th>Description</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td><strong>{{ project.client }}</strong></td>
+                        <td>{{ project.project }}</td>
+                        <td><strong>Rs {{ project.amount|floatformat:0 }}</strong></td>
+                        <td>
+                            <span class="status-indicator 
+                                {% if project.status == 'Completed' %}status-completed
+                                {% elif project.status == 'Ongoing' %}status-ongoing
+                                {% else %}status-pending{% endif %}"></span>
+                            <span class="badge 
+                                {% if project.status == 'Completed' %}bg-success
+                                {% elif project.status == 'Ongoing' %}bg-primary
+                                {% else %}bg-warning{% endif %}">
+                                {{ project.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">Start:</small> {{ project.start_date }}<br>
+                            <small class="text-muted">Due:</small> {{ project.deadline }}
+                        </td>
+                        <td><small>{{ project.description }}</small></td>
+                        <td>{{ project.email|default:"-" }}</td>
+                        <td>{{ project.contact|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">No projects found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card" style="background: var(--bg-tertiary); border: 1px solid var(--border-color);">
+            <div class="card-body text-center">
+                <h5 style="color: var(--text-secondary);"><i class="fas fa-chart-line me-2"></i>Total Value</h5>
+                <h3 style="color: var(--success-color);">Rs 23,000</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card" style="background: var(--bg-tertiary); border: 1px solid var(--border-color);">
+            <div class="card-body text-center">
+                <h5 style="color: var(--text-secondary);"><i class="fas fa-calculator me-2"></i>Average Project Value</h5>
+                <h3 style="color: var(--primary-color);">Rs 4,600</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card" style="background: var(--bg-tertiary); border: 1px solid var(--border-color);">
+            <div class="card-body text-center">
+                <h5 style="color: var(--text-secondary);"><i class="fas fa-calendar-alt me-2"></i>Projects This Month</h5>
+                <h3 style="color: var(--info-color);">{{ projects|length }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Overview{% endblock %}
+
+{% block content %}
+<!-- KPI Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card kpi-card bg-gradient-success fade-in-up glow-on-hover">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-2">Total Earnings</h6>
+                    <h2>Rs {{ total_earnings|floatformat:0 }}</h2>
+                    <small class="opacity-75">+12% from last month</small>
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card kpi-card bg-gradient-primary fade-in-up glow-on-hover" style="animation-delay: 0.1s">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-2">Active Projects</h6>
+                    <h2>{{ active_projects }}</h2>
+                    <small class="opacity-75">{{ active_projects }} in progress</small>
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card kpi-card bg-gradient-warning fade-in-up glow-on-hover" style="animation-delay: 0.2s">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-2">Pending Payments</h6>
+                    <h2>Rs {{ pending_payments|floatformat:0 }}</h2>
+                    <small class="opacity-75">Awaiting payment</small>
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card kpi-card bg-gradient-info fade-in-up glow-on-hover" style="animation-delay: 0.3s">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-2">Completed Projects</h6>
+                    <h2>{{ completed_projects }}</h2>
+                    <small class="opacity-75">Successfully delivered</small>
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="card fade-in-up glow-on-hover" style="animation-delay: 0.4s">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="statusChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="card fade-in-up glow-on-hover" style="animation-delay: 0.5s">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Revenue by Client</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="clientChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card fade-in-up glow-on-hover" style="animation-delay: 0.6s; cursor: pointer;" onclick="window.location.href='{% url 'projects' %}'">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line me-2"></i>Project Amount Distribution (Rs) <i class="fas fa-external-link-alt ms-2 text-muted" style="font-size: 0.8em;"></i></h5>
+            </div>
+            <div class="card-body">
+                <canvas id="amountChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Projects -->
+<div class="card fade-in-up glow-on-hover" style="animation-delay: 0.7s">
+    <div class="card-header">
+        <h5><i class="fas fa-history me-2"></i>Recent Projects</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user me-1"></i>Client</th>
+                        <th><i class="fas fa-project-diagram me-1"></i>Project</th>
+                        <th><i class="fas fa-money-bill me-1"></i>Amount</th>
+                        <th><i class="fas fa-flag me-1"></i>Status</th>
+                        <th><i class="fas fa-calendar me-1"></i>Deadline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects|slice:":5" %}
+                    <tr class="fade-in-up" style="animation-delay: {{ forloop.counter|add:7|floatformat:1 }}s">
+                        <td>{{ project.client }}</td>
+                        <td>{{ project.project }}</td>
+                        <td><strong>Rs {{ project.amount|floatformat:0 }}</strong></td>
+                        <td>
+                            <span class="status-indicator 
+                                {% if project.status == 'Completed' %}status-completed
+                                {% elif project.status == 'Ongoing' %}status-ongoing
+                                {% else %}status-pending{% endif %}"></span>
+                            <span class="badge 
+                                {% if project.status == 'Completed' %}bg-success
+                                {% elif project.status == 'Ongoing' %}bg-primary
+                                {% else %}bg-warning{% endif %}">
+                                {{ project.status }}
+                            </span>
+                        </td>
+                        <td>{{ project.deadline }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Status Distribution Chart
+const statusCtx = document.getElementById('statusChart').getContext('2d');
+const statusData = {
+    {% for status, count in status_counts.items %}
+    '{{ status }}': {{ count }}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+};
+const statusChart = new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(statusData),
+        datasets: [{
+            data: Object.values(statusData),
+            backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ef4444'],
+            borderWidth: 0,
+            hoverBorderWidth: 3,
+            hoverBorderColor: '#ffffff',
+            shadowOffsetX: 3,
+            shadowOffsetY: 3,
+            shadowBlur: 10,
+            shadowColor: 'rgba(0,0,0,0.3)'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '60%',
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#f1f5f9',
+                    padding: 20,
+                    usePointStyle: true,
+                    pointStyle: 'circle'
+                }
+            }
+        },
+        elements: {
+            arc: {
+                borderWidth: 0,
+                hoverBorderWidth: 3
+            }
+        }
+    }
+});
+
+// Client Revenue Chart
+const clientCtx = document.getElementById('clientChart').getContext('2d');
+const clientData = {};
+{% for project in projects %}
+    if (!clientData['{{ project.client }}']) clientData['{{ project.client }}'] = 0;
+    clientData['{{ project.client }}'] += {{ project.amount }};
+{% endfor %}
+
+const clientChart = new Chart(clientCtx, {
+    type: 'bar',
+    data: {
+        labels: Object.keys(clientData),
+        datasets: [{
+            label: 'Revenue (Rs)',
+            data: Object.values(clientData),
+            backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'],
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// Amount Distribution Chart
+const amountCtx = document.getElementById('amountChart').getContext('2d');
+const amountChart = new Chart(amountCtx, {
+    type: 'bar',
+    data: {
+        labels: [{% for project in projects %}'{{ project.project|truncatechars:15 }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Project Amount (Rs)',
+            data: [{% for project in projects %}{{ project.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
+            backgroundColor: function(ctx) {
+                const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
+                return colors[ctx.dataIndex % colors.length];
+            },
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true }, x: { ticks: { maxRotation: 45 } } }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Finance Summary{% endblock %}
+
+{% block content %}
+<!-- Financial KPIs -->
+<div class="row mb-4">
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card kpi-card bg-gradient-success fade-in-up">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-2">Total Income</h6>
+                    <h2>Rs {{ total_income|floatformat:0 }}</h2>
+                    <small class="opacity-75">From completed projects</small>
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card kpi-card bg-gradient-warning fade-in-up" style="animation-delay: 0.1s">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-2">Pending Dues</h6>
+                    <h2>Rs {{ pending_dues|floatformat:0 }}</h2>
+                    <small class="opacity-75">Awaiting collection</small>
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card kpi-card bg-gradient-info fade-in-up" style="animation-delay: 0.2s">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-2">Net Worth</h6>
+                    <h2>Rs {{ total_income|add:pending_dues|floatformat:0 }}</h2>
+                    <small class="opacity-75">Total portfolio value</small>
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Breakdown Chart -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Monthly Income Breakdown (Rs)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Financial Details -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Completed Projects (Paid)</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Project</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in projects %}
+                                {% if project.status == 'Completed' %}
+                                <tr>
+                                    <td>{{ project.client }}</td>
+                                    <td>{{ project.project }}</td>
+                                    <td>Rs {{ project.amount|floatformat:0 }}</td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Pending Payments</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Project</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in projects %}
+                                {% if project.status == 'Pending' %}
+                                <tr>
+                                    <td>{{ project.client }}</td>
+                                    <td>{{ project.project }}</td>
+                                    <td>Rs {{ project.amount|floatformat:0 }}</td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Monthly Income Chart
+const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+const monthlyChart = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ monthly_data.keys|safe }},
+        datasets: [{
+            label: 'Monthly Income (Rs)',
+            data: {{ monthly_data.values|safe }},
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

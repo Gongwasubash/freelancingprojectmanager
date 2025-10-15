@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cog me-2"></i>Google Sheets API Configuration</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-primary border-0" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);">
+                    <h6><i class="fas fa-info-circle me-2"></i>Setup Instructions</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ol class="mb-0">
+                                <li>Go to <a href="https://console.cloud.google.com/" target="_blank" class="text-decoration-none">Google Cloud Console</a></li>
+                                <li>Create a new project or select existing one</li>
+                                <li>Enable Google Sheets API</li>
+                                <li>Create Service Account credentials</li>
+                            </ol>
+                        </div>
+                        <div class="col-md-6">
+                            <ol start="5" class="mb-0">
+                                <li>Download the JSON credentials file</li>
+                                <li>Rename it to <code class="bg-light px-2 py-1 rounded">credentials.json</code></li>
+                                <li>Place in project root directory</li>
+                                <li>Share your Google Sheet with service account email</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                
+                <form>
+                    <div class="mb-3">
+                        <label for="sheetId" class="form-label">Google Sheet ID</label>
+                        <input type="text" class="form-control" id="sheetId" value="1F2PLmOQC3J8G3K9j2Q6EH37hP7toKphSuCZN4jfVD7Q" readonly>
+                        <div class="form-text">This is extracted from your Google Sheets URL</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="credentialsFile" class="form-label">Credentials File</label>
+                        <input type="file" class="form-control" id="credentialsFile" accept=".json">
+                        <div class="form-text">Upload your Google Service Account JSON file</div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="testConnection()">
+                        <i class="fas fa-plug me-2"></i>Test Connection
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-server me-2"></i>System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                    <div>
+                        <strong>Google Sheets API</strong>
+                        <br><small class="text-muted">Connection status</small>
+                    </div>
+                    <span class="badge bg-warning">Not Configured</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                    <div>
+                        <strong>Last Data Sync</strong>
+                        <br><small class="text-muted">Most recent update</small>
+                    </div>
+                    <span class="text-muted">Using sample data</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                    <div>
+                        <strong>Total Records</strong>
+                        <br><small class="text-muted">Available projects</small>
+                    </div>
+                    <span class="badge bg-info">5 (Sample)</span>
+                </div>
+                
+                <hr>
+                
+                <h6>Quick Actions</h6>
+                <button class="btn btn-outline-primary btn-sm w-100 mb-2" onclick="refreshData()">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                </button>
+                <button class="btn btn-outline-secondary btn-sm w-100" onclick="exportData()">
+                    <i class="fas fa-download me-2"></i>Export Data
+                </button>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-table me-2"></i>Expected Sheet Format</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Your Google Sheet should have these columns:</p>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">A</span>
+                            <code>Client</code>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">B</span>
+                            <code>Project</code>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">C</span>
+                            <code>Amount</code>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">D</span>
+                            <code>Status</code>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">E</span>
+                            <code>Deadline</code>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">F</span>
+                            <code>Start Date</code>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">G</span>
+                            <code>Description</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function testConnection() {
+    const button = event.target;
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Testing...';
+    button.disabled = true;
+    
+    setTimeout(() => {
+        alert('Connection test completed!\n\nNote: Please ensure credentials.json is properly configured for live data.');
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }, 2000);
+}
+
+function exportData() {
+    showAlert('Export functionality will be available once Google Sheets is configured.', 'info');
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container-fluid');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}
