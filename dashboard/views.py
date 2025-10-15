@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .sheets_service import GoogleSheetsService
@@ -20,6 +21,7 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+@login_required
 def dashboard(request):
     sheets_service = GoogleSheetsService()
     projects = sheets_service.get_dashboard_data()
@@ -58,6 +60,7 @@ def dashboard(request):
     }
     return render(request, 'dashboard/overview.html', context)
 
+@login_required
 def projects_list(request):
     sheets_service = GoogleSheetsService()
     projects = sheets_service.get_dashboard_data()
@@ -76,6 +79,7 @@ def projects_list(request):
     
     return render(request, 'dashboard/projects.html', {'projects': projects})
 
+@login_required
 def finance_summary(request):
     sheets_service = GoogleSheetsService()
     projects = sheets_service.get_dashboard_data()
@@ -101,9 +105,11 @@ def finance_summary(request):
     }
     return render(request, 'dashboard/finance.html', context)
 
+@login_required
 def settings_view(request):
     return render(request, 'dashboard/settings.html')
 
+@login_required
 def refresh_data(request):
     sheets_service = GoogleSheetsService()
     projects = sheets_service.get_dashboard_data()

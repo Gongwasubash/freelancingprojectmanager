@@ -22,30 +22,24 @@ class GoogleSheetsService:
             scope = ['https://spreadsheets.google.com/feeds',
                     'https://www.googleapis.com/auth/drive']
             
-            # Check for environment variable first (for production)
-            credentials_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
-            if credentials_json:
-                import json
-                from google.oauth2.service_account import Credentials
-                creds_dict = json.loads(credentials_json)
-                creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
-                self.client = gspread.authorize(creds)
-                self.workbook = self.client.open_by_key(self.sheet_id)
-                self.sheet = self.workbook.worksheet('Orders')
-                print("Successfully connected using environment credentials")
-                return True
-            elif os.path.exists(self.credentials_file):
+            if os.path.exists(self.credentials_file):
                 creds = Credentials.from_service_account_file(self.credentials_file, scopes=scope)
                 self.client = gspread.authorize(creds)
                 self.workbook = self.client.open_by_key(self.sheet_id)
-                self.sheet = self.workbook.worksheet('Orders')
-                print(f"Successfully connected using file: {self.credentials_file}")
+                self.sheet = self.workbook.worksheet('Orders')  # Get 'Orders' sheet
+                print(f"Successfully connected to 'Orders' sheet using {self.credentials_file}")
                 return True
             else:
-                print("No credentials found, using sample data")
+                print(f"Credentials file not found at: {self.credentials_file}")
+                print("Using sample data instead")
                 return False
         except Exception as e:
             print(f"Authentication error: {str(e)}")
+            print("Common issues:")
+            print("1. Service account email not shared with the Google Sheet")
+            print("2. Google Sheets API not enabled in Google Cloud Console")
+            print("3. Invalid credentials file format")
+            print("4. 'Orders' sheet not found in the workbook")
             return False
     
     def get_all_data(self):
